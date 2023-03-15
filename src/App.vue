@@ -1,11 +1,11 @@
 <template>
-  <div class="name">
-    {{name}}
-  </div>
-  <input v-bind:type="type" v-bind:value="name">
+  <input 
+    type="type" 
+    v-model="name"
+  >
   <button 
     class="btn btn-primary"
-    v-on:click="updateName"
+    @:click="onSubmit"
   >
     Click
   </button>
@@ -15,21 +15,16 @@
 import { ref } from 'vue' ;
 export default {
  setup(){
-  const name = ref('kosa');
-  const type = ref("number");
+  const name = ref('kosa2');
 
-  const updateName = () => {
-    name.value = 'Metanet';
-    type.value = 'text';
+  const onSubmit = () => {
     console.log(name);
   }
- 
 
 // 값을 리턴해주지 않으면 오류가 난다.
   return{
     name,
-    updateName,
-    type,
+    onSubmit,
   }
  }
 }
@@ -37,6 +32,7 @@ export default {
 
 <style>
   .name{
-    color : blue;
+    color : red;
   }
+
 </style>
