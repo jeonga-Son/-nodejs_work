@@ -1,35 +1,35 @@
 <template>
-  <div v-if="toggle">true</div>
-  <div v-else>false</div>
-  <button  class="btn btn-outline-success" @click="onToggle">Toggle</button>
-
   <div class="container">
     <h2>To-do</h2>
       <form
-        class="d-flex"
         @submit.prevent="onSubmit"
       >
-
-      <div class="flex-grow-1 mr-2">
-        <input 
-          class="form-control"
-          type="text" 
-          v-model="todo"
-          placeholder="Type new to-do"
-        >
+      
+      <div  class="d-flex">
+        <div class="flex-grow-1 mr-2">
+          <input 
+            class="form-control"
+            type="text" 
+            v-model="todo"
+            placeholder="Type new to-do"
+          >
+        </div>
+      
+        <div>
+          <button 
+            class="btn btn-outline-info"
+            @:click="submit"
+          >
+          Add
+          </button>
+        </div>
       </div>
       
-      <div>
-        <button 
-          class="btn btn-outline-info"
-          @:click="submit"
-        >
-        Add
-        </button>
+      <div v-if="hasError" style="color:red">
+        This s cannot be empty
       </div>
-      <div>Error</div>
     </form>
-    {{todos}}
+    <!-- {{todos}} -->
     <!-- for문을 돌릴 때 유일한 키 값이 꼭 필요하다. -->
     <div 
       v-for="todo in todos"
@@ -39,7 +39,6 @@
         {{todo.subject}}
       </div>
     </div>
-
   </div> 
   
 </template>
@@ -54,28 +53,28 @@ export default {
     {id:2, subject: 'vue work'}
   ]);
 
-  const toggle = ref(false);
+  const hasError = ref(false)
 
   const onSubmit = () => {
 
-    todos.value.push({
-      id: Date.now(),
-      subject: todo.value
-    });
-    console.log(todos);
+    if(todo.value == '') {
+      hasError.value = true;
+    } else {
+        todos.value.push({
+        id: Date.now(),
+        subject: todo.value
+      });
+      hasError.value = false;
+    }   
   }
 
-  const onToggle = () => {
-    toggle.value = !toggle.value;
-  }
 
 // 값을 리턴해주지 않으면 오류가 난다.
   return{
     todo,
     onSubmit,
     todos,
-    toggle,
-    onToggle,
+    hasError,
   }
  }
 }
