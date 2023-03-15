@@ -2,7 +2,7 @@
   <div class="name">
     {{name}}
   </div>
-  <input type="text" value="name">
+  <input v-bind:type="type" v-bind:value="name">
   <button 
     class="btn btn-primary"
     v-on:click="updateName"
@@ -16,9 +16,11 @@ import { ref } from 'vue' ;
 export default {
  setup(){
   const name = ref('kosa');
+  const type = ref("number");
 
   const updateName = () => {
-    name.value = 2222222;
+    name.value = 'Metanet';
+    type.value = 'text';
     console.log(name);
   }
  
@@ -27,6 +29,7 @@ export default {
   return{
     name,
     updateName,
+    type,
   }
  }
 }
