@@ -1,16 +1,27 @@
 <template>  
-  <h4>count: {{count}}</h4>
-  <h4> double count : {{doubleCount}}</h4>
-  <button @click="count++">Add One</button>
   <div class="container">
     <h2>To-Do List</h2>
+
+    <input
+      class="form-control" 
+      type="text" 
+      v-model="searchText"
+      placeholder="Search"
+    >
+
+    <br>
+
     <TodoSimpleForm @add-todo="addTodo"/>
     
     <div v-if="!todos.length">
       추가된 Todo가 없습니다.
     </div>
 
-    <TodoList :todos="todos"
+    <div v-if="!filteredTodos.length">
+      There is nothing to display
+    </div>
+
+    <TodoList :todos="filteredTodos"
               @toggle-todo="toggleTodo" 
               @delete-todo="deleteTodo"/>
 
@@ -18,7 +29,8 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref , computed} from 'vue';
+import axios from "axios";
 import TodoSimpleForm from './components/TodoSimpleForm.vue';
 import TodoList from './components/TodoList.vue';
 export default {  
@@ -29,10 +41,15 @@ export default {
   setup(){
       
     const todos = ref([]);   
+    const searchText = ref('');
+    const filteredTodos = computed(() => {
+      if(searchText.value) {
+        return todos.value.filter(todo => {
+          return todo.subject.includes(searchText.value);
+        });
+      }
 
-    const count = ref(1);
-    const doubleCount = computed(() => {
-      return count.value * 2;
+      return todos.value;
     });
 
     const deleteTodo = (index) => {
@@ -40,6 +57,10 @@ export default {
     }   
 
     const addTodo = (todo) => {
+      axios.post('http://localhost:3000/todos', { // 테이블형식으로 데이터를 post하면 추가된다.
+        subject: todo.subject,
+        completed: todo.completed
+      }); 
       todos.value.push(todo);
     }
 
@@ -52,8 +73,8 @@ export default {
       deleteTodo,
       addTodo,
       toggleTodo,
-      count,
-      doubleCount,
+      searchText,
+      filteredTodos,
     }
   }  
 }
