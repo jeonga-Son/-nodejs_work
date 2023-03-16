@@ -62,6 +62,18 @@ export default {
       todos.value.splice(index, 1);
     }   
 
+    const getTodos = async () => {
+       try{
+          const res = await axios.get('http://localhost:3000/todos');  
+          todos.value = res.data;
+        } catch(err) {
+          console.log(error);
+          error.value = 'Something went wrong';
+        }
+    }
+
+    getTodos();
+
     const addTodo = async (todo) => {
       error.value ='';
       try{
@@ -88,6 +100,7 @@ export default {
       searchText,
       filteredTodos,
       error,
+      getTodos,
     }
   }  
 }
