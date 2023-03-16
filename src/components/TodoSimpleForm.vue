@@ -29,7 +29,7 @@
 <script>
 import { ref } from 'vue';
 export default {
-    setup(){
+    setup(props, context){ // context를 이용해서 데이터값을 추가한다.
         const todo = ref('');
         const hasError = ref(false); 
 
@@ -37,11 +37,12 @@ export default {
             if(todo.value == ''){
                 hasError.value = true;
             }else{
-                // todos.value.push({
-                //     id: Date.now(),
-                //     subject: todo.value,
-                //     completed: false,  
-                // });
+               context.emit('add-todo', { // 'add-todo'의 이름으로 데이터 값을 보낼 준비 다 됨.
+                    id: Date.now(),
+                    subject: todo.value,
+                    completed: false,  
+               });
+
                 hasError.value = false;
                 todo.value = '';
             } 
