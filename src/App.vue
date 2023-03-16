@@ -29,14 +29,18 @@
         This s cannot be empty
       </div>
     </form>
+
+    <div v-if="!todos.length" style="color:red">
+        추가된 ToDo가 없습니다.
+    </div>
     <!-- {{todos}} -->
     <!-- for문을 돌릴 때 유일한 키 값이 꼭 필요하다. -->
     <div 
-      v-for="todo in todos"
+      v-for="(todo, index) in todos"
       :key="todo.id" 
       class="card mt-2">
-      <div class="card-ody p-2">
-        <div class="form-check">
+      <div class="card-ody p-2 d-flex algin-itmes-cencter">
+        <div class="form-check flex-grow-1">
           <input class="form-check-input"
                   type="checkbox"
                   v-model="todo.completed">
@@ -44,12 +48,15 @@
                   :class="{todo: todo.completed}">
             {{todo.subject}}
           </label>
-          <div>
-            <button class="btn btn-outline-danger btn-sm">
+        </div>
+        <div>
+            <button 
+              class="btn btn-outline-danger btn-sm"
+              @click="deleteTodo(index)"
+            >
               Delete
             </button>
           </div>
-        </div>
       </div>
     </div>
   </div> 
@@ -63,7 +70,7 @@ export default {
   // 변수
   const todo = ref('');
   const todos = ref([]);
-  const hasError = ref(false)
+  const hasError = ref(false);
   
 
   // 함수
@@ -82,6 +89,11 @@ export default {
     }   
   }
 
+  const deleteTodo = (index) => {
+    // todos는 ref라 반드시 value를 써야 한다.
+    todos.value.splice(index, 1);
+  }
+
 
 // 값을 리턴해주지 않으면 오류가 난다.
   return{
@@ -89,6 +101,7 @@ export default {
     onSubmit,
     todos,
     hasError,
+    deleteTodo,
   }
  }
 }
