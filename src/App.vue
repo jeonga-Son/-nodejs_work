@@ -36,7 +36,20 @@
       :key="todo.id" 
       class="card mt-2">
       <div class="card-ody p-2">
-        {{todo.subject}}
+        <div class="form-check">
+          <input class="form-check-input"
+                  type="checkbox"
+                  v-model="todo.completed">
+          <label class="form-check-label"
+                  :class="{todo: todo.completed}">
+            {{todo.subject}}
+          </label>
+          <div>
+            <button class="btn btn-outline-danger btn-sm">
+              Delete
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div> 
@@ -47,14 +60,13 @@
 import { ref } from 'vue' ;
 export default {
  setup(){
+  // 변수
   const todo = ref('');
-  const todos = ref([
-    {id:1, subject: 'vue study'},
-    {id:2, subject: 'vue work'}
-  ]);
-
+  const todos = ref([]);
   const hasError = ref(false)
+  
 
+  // 함수
   const onSubmit = () => {
 
     if(todo.value == '') {
@@ -62,9 +74,11 @@ export default {
     } else {
         todos.value.push({
         id: Date.now(),
-        subject: todo.value
+        subject: todo.value,
+        completed: false,
       });
       hasError.value = false;
+      todo.value = ''; // 데이터 값을 초기화 한다.
     }   
   }
 
@@ -81,8 +95,9 @@ export default {
 </script>
 
 <style>
-  .name{
-    color : red;
+  .todo{
+    color : gray;
+    text-decoration: line-through;
   }
 
 </style>
