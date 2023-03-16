@@ -32,7 +32,8 @@ export default {
             type: Array,
             required: true
         }
-    },
+    }, 
+    emits: ['toggle-todo','delete-todo'], // emit을 여러번 사용하기 때문에 목록으로 명시해준다. 
     setup(props, context){
         const toggleTodo = (index) => {
             context.emit('toggle-todo', index);
