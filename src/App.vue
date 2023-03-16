@@ -58,11 +58,22 @@ export default {
       return todos.value;
     });
 
-    const deleteTodo = (index) => {
-      todos.value.splice(index, 1);
+    // 삭제 구현
+    const deleteTodo = async (index) => {
+      error.value ='';
+      const id = todos.value[index].id;
+      try{
+          await axios.delete('http://localhost:3000/todos/' + id); 
+          todos.value.splice(index, 1);
+      } catch(err) {
+        console.log(error);
+        error.value = 'Something went wrong';
+      }
+      
     }   
 
     const getTodos = async () => {
+      error.value ='';
        try{
           const res = await axios.get('http://localhost:3000/todos');  
           todos.value = res.data;
