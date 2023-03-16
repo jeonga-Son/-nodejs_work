@@ -12,7 +12,8 @@
     <br>
 
     <TodoSimpleForm @add-todo="addTodo"/>
-    
+    <div style="color: red">{{error}}</div>
+
     <div v-if="!todos.length">
       추가된 Todo가 없습니다.
     </div>
@@ -42,6 +43,8 @@ export default {
       
     const todos = ref([]);   
     const searchText = ref('');
+    const error = ref('');
+
     const filteredTodos = computed(() => {
       if(searchText.value) {
         return todos.value.filter(todo => {
@@ -60,8 +63,13 @@ export default {
       axios.post('http://localhost:3000/todos', { // 테이블형식으로 데이터를 post하면 추가된다.
         subject: todo.subject,
         completed: todo.completed
-      }); 
-      todos.value.push(todo);
+      }).then(res => { // 해당하는 데이터 값이 정상적으로 저장이 되었을 때 사용됨.
+        console.log(res.data);
+        todos.value.push(res.data); // 배열안에 데이터값을 넣는 것
+      }).catch(error => {
+        console.log(error);
+        error.value = 'Something went wrong'
+      });
     }
 
     const toggleTodo = (index) => {     
@@ -75,6 +83,7 @@ export default {
       toggleTodo,
       searchText,
       filteredTodos,
+      error,
     }
   }  
 }
