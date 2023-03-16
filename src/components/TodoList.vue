@@ -34,16 +34,16 @@ export default {
         }
     }, 
     emits: ['toggle-todo','delete-todo'], // emit을 여러번 사용하기 때문에 목록으로 명시해준다. 
-    setup(props, context){
+    setup(props, {emit}){
         const toggleTodo = (index) => {
-            context.emit('toggle-todo', index);
+            emit('toggle-todo', index);
         }
 
         // app.vue에 리스트가 있기 때문에 함수를 가져올 수 없다.
         // 인덱스 값을 전달하여 삭제를 한다.
         // 자식 -> 부모에게 삭제 버튼을 클릭한 사실을 전달한다.
         const deleteTodo = (index) => {
-            context.emit('delete-todo', index);
+            emit('delete-todo', index);
         }
         
 
