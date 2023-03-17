@@ -15,11 +15,11 @@
       추가된 Todo가 없습니다.
     </div>
 
-    <div v-if="!filteredTodos.length">
+    <div v-if="!todos.length">
       There is noting to display  
     </div>    
 
-    <TodoList :todos="filteredTodos"
+    <TodoList :todos="todos"
               @toggle-todo="toggleTodo"
               @delete-todo="deleteTodo" />
 
@@ -69,9 +69,13 @@ export default {
     const limit = 5;
     const currentPage = ref(1);
 
-    watch(currentPage, (currentPage, prev) => {
-      console.log(currentPage, prev);
+    watch(searchText, () => {
+      getTodos(1);
     });
+
+    // watch(currentPage, (currentPage, prev) => {
+    //   console.log(currentPage, prev);
+    // });
 
     // watchEffect(() => {
     //   console.log(currentPage.value); //currentPage 값이변경될 때 마다 데이터값이 출력된다.
@@ -81,15 +85,16 @@ export default {
       return Math.ceil(numberOfTodos.value/limit);
     });
 
-    const filteredTodos = computed(() => {
-      if(searchText.value){
-        return todos.value.filter(todo => {
-          return todo.subject.includes(searchText.value);
-        });
-      }
+    // const filteredTodos = computed(() => {
+    //   if(searchText.value){
+    //     console.log(todos.value.length); // 전체 내용 검색이 아닌 한 페이지에 있는 글 다섯개만 가지고 데이터 값을 가져오도록 만든 것 을 확인할 수 있음.
+    //     return todos.value.filter(todo => {
+    //       return todo.subject.includes(searchText.value);
+    //     });
+    //   }
 
-      return todos.value
-    });
+    //   return todos.value
+    // });
 
     const deleteTodo = async (index) => {
       error.value = '';
@@ -108,7 +113,7 @@ export default {
       error.value = '';
       try{
         const res = await axios.get(
-          `http://localhost:3000/todos?_page=${page}&_limit=${limit}`);
+          `http://localhost:3000/todos?subject_like=${searchText.value}&_page=${page}&_limit=${limit}`);
 
         numberOfTodos.value = res.headers['x-total-count'];  
         //console.log(res.headers['x-total-count']);
@@ -155,7 +160,7 @@ export default {
       addTodo,
       toggleTodo, 
       searchText,
-      filteredTodos, 
+      // filteredTodos, 
       error,  
       getTodos,
       numberOfTodos,
