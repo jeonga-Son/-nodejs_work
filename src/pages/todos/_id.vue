@@ -41,7 +41,8 @@
         Cancel
     </button>
   </form>
-  <Toast v-if="showToast"/>
+  <Toast v-if="showToast"
+          :message="toastMessage" /> 
 </template>
 
 <script>
@@ -65,9 +66,16 @@ export default {
         const originalTodo = ref(null); // 오리지널 todo값을 가질 수 있는 변수를 선언
        
        const showToast = ref(false);
+       const toastMessage = ref(''); 
 
-       const triggerToast = () => {
-          showToast.value = true;
+       const triggerToast = (message) => { //메세지라는 이름으로 데이터 값이 넘어오면
+          showToast.value = true; // 화면에서 보여진다.
+          toastMessage.value = message; // toastMessage.value에 message값을 넣어준다.
+          setTimeout(() => {
+              // 먼저 toastMEssaage에 해당하는 값을 기본값으로 초기화한다.
+              toastMessage.value = '';
+              showToast.value = false; // 화면에서 3초 후에 사라진다.
+          }, 3000)
        }
 
         const onSave = async() => {
@@ -78,7 +86,7 @@ export default {
             completed: todo.value.completed
           }); // 벡틱을 쓰면 안에 변수를 넣을 수 있다.
           originalTodo.value = {...res.data}; // 새로운 값으로 저장된 것을 original값으로 다시 저장한다.
-          triggerToast();
+          triggerToast('집에 보내줘!!!!!!!!!!!!!!!!!!!!!!!'); // 메세지값이 이거로 수정이 되도록 한다.
           console.log(res);
         }
 
@@ -87,12 +95,17 @@ export default {
         });
 
         const getTodo = async() => { // 비동기식 처리
-          const res = await axios.get(`http://localhost:3000/todos/${todoId}`);
-          todo.value = {...res.data};
-          originalTodo.value = {...res.data};//res.data => 같은값이 저장된다. 같은 주소값을 가짐. 따라서 {...res.dat}로 새로운 주소값을 받아 복사해서 가져온다.
-          console.log(todo.value);
-          loading.value = false; // 데이터 값을 받아오면 false 처리
-        }
+          try {
+              const res = await axios.get(`http://localhost:3000/todos/${todoId}`);
+              todo.value = {...res.data};
+              originalTodo.value = {...res.data};//res.data => 같은값이 저장된다. 같은 주소값을 가짐. 따라서 {...res.dat}로 새로운 주소값을 받아 복사해서 가져온다.
+              console.log(todo.value);
+              loading.value = false; // 데이터 값을 받아오면 false 처리
+          } catch(err) {
+            console.log(err);
+            triggerToast('something wnet wrong!');
+          }
+        };
       
         const moveToListPage = () => {
             router.push({
@@ -116,6 +129,7 @@ export default {
           todoUpdated,
           showToast,
           triggerToast,
+          toastMessage,
         }
 
     }

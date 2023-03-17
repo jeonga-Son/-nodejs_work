@@ -1,13 +1,18 @@
 <template>
     <div
-        class="alert alert-success toast-box">
-        Toast Alert
+        class="alert alert-success toast-box" role="alert">
+        {{message}}
     </div>
 </template>
 
 <script>
-export default {
-
+export default { // 부모에서 props를 통해 받아오는 message 값을 결과 화면으로 띄워준다.
+    props: {
+        message: {
+            type: String,
+            required: true
+        }
+    }
 }
 </script>
 
