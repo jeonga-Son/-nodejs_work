@@ -41,6 +41,7 @@
         Cancel
     </button>
   </form>
+  <Toast v-if="showToast"/>
 </template>
 
 <script>
@@ -48,8 +49,13 @@ import {useRoute, useRouter} from 'vue-router';
 import axios from 'axios';
 import {ref, computed} from '@vue/reactivity';
 import _ from 'lodash';
+import Toast from '@/components/Toast.vue'; // @ => 절대경로
 
 export default {
+  components: { // 다른 위치에있는 파일을 불러와서 여기서 실행시키고 싶다면 이렇게 선언해줘야한다.
+    Toast
+  },
+
     setup(){
         const route = useRoute();
         const router = useRouter(); // route가 뭔지 router가 뭔지 알아야 함.
@@ -57,6 +63,12 @@ export default {
         const loading = ref(true); // 처음엔 true로 선언
         const todoId = route.params.id;
         const originalTodo = ref(null); // 오리지널 todo값을 가질 수 있는 변수를 선언
+       
+       const showToast = ref(false);
+
+       const triggerToast = () => {
+          showToast.value = true;
+       }
 
         const onSave = async() => {
           //patch나 put은 수정.
@@ -65,6 +77,7 @@ export default {
             subject: todo.value.subject,
             completed: todo.value.completed
           }); // 벡틱을 쓰면 안에 변수를 넣을 수 있다.
+          originalTodo.value = {...res.data}; // 새로운 값으로 저장된 것을 original값으로 다시 저장한다.
           console.log(res);
         }
 
@@ -100,6 +113,8 @@ export default {
           moveToListPage,
           onSave,
           todoUpdated,
+          showToast,
+          triggerToast,
         }
 
     }
