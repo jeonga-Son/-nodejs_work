@@ -51,29 +51,19 @@
       "id": 23
     },
     {
-      "subject": "ㄹㅇㄴㄻㄴㅇㄹ",
+      "subject": "ㅁ22222222222222222",
       "completed": false,
       "id": 24
     },
     {
-      "subject": "ㅁㅇㄹㅇㄹ",
-      "completed": false,
+      "subject": "ㅁㅇㄹㅇㄹㅇ222222222",
+      "completed": true,
       "id": 25
     },
     {
-      "subject": "ㄴㅇㄻㄴㅇㄹ",
-      "completed": false,
-      "id": 26
-    },
-    {
       "subject": "ㅁㄴㄻㄴㅇㄹ",
-      "completed": false,
+      "completed": true,
       "id": 27
-    },
-    {
-      "subject": "ㅁㄴㅇㄻㄴㅇㄹ",
-      "completed": false,
-      "id": 28
     }
   ]
 }
