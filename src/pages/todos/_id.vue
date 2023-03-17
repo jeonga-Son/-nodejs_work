@@ -29,8 +29,15 @@
       </div>
     </div>
 
-    <button type="submit" class="btn btn-outline-primary">Save</button>
-    <button class="btn btn-outline-primary ml-2" @click="moveToListPage">
+    <button 
+        type="submit" 
+        class="btn btn-info"
+        :disabled="!todoUpdated">
+        Save
+    </button>
+    <button 
+        class="btn btn-secondary ml-2" 
+        @click="moveToListPage">
         Cancel
     </button>
   </form>
@@ -38,8 +45,9 @@
 
 <script>
 import {useRoute, useRouter} from 'vue-router';
-import axios from  'axios';
-import {ref} from '@vue/reactivity';
+import axios from 'axios';
+import {ref, computed} from '@vue/reactivity';
+import _ from 'lodash';
 
 export default {
     setup(){
@@ -48,6 +56,7 @@ export default {
         const todo = ref(null);
         const loading = ref(true); // 처음엔 true로 선언
         const todoId = route.params.id;
+        const originalTodo = ref(null); // 오리지널 todo값을 가질 수 있는 변수를 선언
 
         const onSave = async() => {
           //patch나 put은 수정.
@@ -59,24 +68,30 @@ export default {
           console.log(res);
         }
 
+        const todoUpdated = computed(() => {
+          return !_.isEqual(todo.value, originalTodo.value); // 값이 서로 같지 않으면 버튼을 비활성화 처리
+        });
+
         const getTodo = async() => { // 비동기식 처리
           const res = await axios.get(`http://localhost:3000/todos/${todoId}`);
-          todo.value = res.data;
+          todo.value = {...res.data};
+          originalTodo.value = {...res.data};//res.data => 같은값이 저장된다. 같은 주소값을 가짐. 따라서 {...res.dat}로 새로운 주소값을 받아 복사해서 가져온다.
+          console.log(todo.value);
           loading.value = false; // 데이터 값을 받아오면 false 처리
-       }
-
-        getTodo();
-
+        }
       
         const moveToListPage = () => {
             router.push({
                 name: 'Todos'
-            })
-        };
+            });
+            // router.push('/todos');
+        }
 
         const toggleTodoStatus = () => {
-          todo.value.completed = ! todo.value.completed
+          todo.value.completed = !todo.value.completed
         }
+
+        getTodo();
 
         return {
           todo,
@@ -84,6 +99,7 @@ export default {
           toggleTodoStatus,
           moveToListPage,
           onSave,
+          todoUpdated,
         }
 
     }
