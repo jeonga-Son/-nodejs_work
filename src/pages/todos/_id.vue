@@ -42,7 +42,8 @@
     </button>
   </form>
   <Toast v-if="showToast"
-          :message="toastMessage" /> 
+          :message="toastMessage"
+          :type="toastAlertType" /> 
 </template>
 
 <script>
@@ -67,14 +68,17 @@ export default {
        
        const showToast = ref(false);
        const toastMessage = ref(''); 
+       const toastAlertType = ref('');
 
-       const triggerToast = (message) => { //메세지라는 이름으로 데이터 값이 넘어오면
+       const triggerToast = (message, type = 'success') => { //메세지라는 이름으로 데이터 값이 넘어오면
           showToast.value = true; // 화면에서 보여진다.
           toastMessage.value = message; // toastMessage.value에 message값을 넣어준다.
+          toastAlertType.value = type;
+
           setTimeout(() => {
-              // 먼저 toastMEssaage에 해당하는 값을 기본값으로 초기화한다.
-              toastMessage.value = '';
+              toastMessage.value = ''; // // 먼저 toastMEssaage에 해당하는 값을 기본값으로 초기화한다.
               showToast.value = false; // 화면에서 3초 후에 사라진다.
+              toastAlertType.value = ''; // toastAlertType값을 초기화 해준다.
           }, 3000)
        }
 
@@ -103,7 +107,7 @@ export default {
               loading.value = false; // 데이터 값을 받아오면 false 처리
           } catch(err) {
             console.log(err);
-            triggerToast('something wnet wrong!');
+            triggerToast('something went wrong!', 'danger');
           }
         };
       
@@ -130,6 +134,7 @@ export default {
           showToast,
           triggerToast,
           toastMessage,
+          toastAlertType,
         }
 
     }

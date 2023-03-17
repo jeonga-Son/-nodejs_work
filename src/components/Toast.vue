@@ -1,6 +1,8 @@
 <template>
     <div
-        class="alert alert-success toast-box" role="alert">
+        class="alert alert-success toast-box" 
+        role="alert"
+        :class="`alert-${type}`">
         {{message}}
     </div>
 </template>
@@ -11,6 +13,10 @@ export default { // 부모에서 props를 통해 받아오는 message 값을 결
         message: {
             type: String,
             required: true
+        },
+        type: {
+            type: String,
+            default: 'success'
         }
     }
 }
