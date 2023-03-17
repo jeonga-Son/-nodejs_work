@@ -6,6 +6,7 @@
       type="text" 
       v-model="searchText"
       placeholder="Search"
+      @keyup.enter="searchTodo"
     >
     <hr>
     <TodoSimpleForm @add-todo="addTodo"/>
@@ -29,15 +30,16 @@
         <li
           v-if="currentPage !== 1" 
           class="page-item">
-          <a class="page-link"  @click="getTodos(currentPage - 1)">Previous</a>
+          <a class="page-link" @click="getTodos(currentPage - 1)">Previous</a>
         </li>
         <li
           v-for="page in numberOfPages"
           :key="page"
           class="page-item"
           :class="currentPage === page ? 'active' : ''">
-          <a class="page-link" @click="getTodos(page)">
-            {{page}}
+          <a class="page-link"
+             @click="getTodos(page)">
+             {{page}}
           </a>
         </li>        
         <li 
@@ -68,40 +70,32 @@ export default {
     const numberOfTodos = ref(0);
     const limit = 5;
     const currentPage = ref(1);
+    let timeout = null;
 
     watch(searchText, () => {
-      getTodos(1);
+      clearTimeout(timeout); // 기존의 스케줄이 삭제가 된다.
+      timeout = setTimeout(() => { // searchText가 바뀌면 기존의 요청을 취소시켜줘야한다.
+        getTodos(1);
+      }, 2000);
+      
     });
 
-    // watch(currentPage, (currentPage, prev) => {
-    //   console.log(currentPage, prev);
-    // });
-
-    // watchEffect(() => {
-    //   console.log(currentPage.value); //currentPage 값이변경될 때 마다 데이터값이 출력된다.
-    // });
+    const searchTodo = () => {
+      clearTimeout(timeout);
+      getTodos(1);
+    }
 
     const numberOfPages = computed(() => {
       return Math.ceil(numberOfTodos.value/limit);
-    });
-
-    // const filteredTodos = computed(() => {
-    //   if(searchText.value){
-    //     console.log(todos.value.length); // 전체 내용 검색이 아닌 한 페이지에 있는 글 다섯개만 가지고 데이터 값을 가져오도록 만든 것 을 확인할 수 있음.
-    //     return todos.value.filter(todo => {
-    //       return todo.subject.includes(searchText.value);
-    //     });
-    //   }
-
-    //   return todos.value
-    // });
+    });   
 
     const deleteTodo = async (index) => {
       error.value = '';
       const id = todos.value[index].id;
       try{
         await axios.delete('http://localhost:3000/todos/'+id);
-        todos.value.splice(index, 1);
+        //todos.value.splice(index, 1);
+         getTodos(1);
       }catch(err){
         console.log(err);
         error.value = 'Someting went wrong';
@@ -113,11 +107,10 @@ export default {
       error.value = '';
       try{
         const res = await axios.get(
-          `http://localhost:3000/todos?subject_like=${searchText.value}&_page=${page}&_limit=${limit}`);
+          `http://localhost:3000/todos?_sort=id&_order=desc&subject_like=${searchText.value}&_page=${page}&_limit=${limit}`);
 
-        numberOfTodos.value = res.headers['x-total-count'];  
-        //console.log(res.headers['x-total-count']);
-        todos.value = res.data;
+        numberOfTodos.value = res.headers['x-total-count'];         
+        todos.value = res.data;       
       }catch(err){
         console.log(err);
         error.value = 'Someting went wrong';
@@ -129,11 +122,12 @@ export default {
     const addTodo = async (todo) => {
       error.value = '';
       try{
-        const res = await axios.post('http://localhost:3000/todos', {
+        await axios.post('http://localhost:3000/todos', {
           subject: todo.subject,
           completed: todo.completed
         });
-        todos.value.push(res.data);
+        //todos.value.push(res.data);
+         getTodos(1);
       }catch(err){
         console.log(err);
         error.value = 'Someting went wrong';
@@ -160,13 +154,13 @@ export default {
       addTodo,
       toggleTodo, 
       searchText,
-      // filteredTodos, 
       error,  
       getTodos,
       numberOfTodos,
       limit,
       currentPage,
       numberOfPages, 
+      searchTodo,
     }
   }  
 }
