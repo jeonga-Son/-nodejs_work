@@ -78,6 +78,7 @@ export default {
             completed: todo.value.completed
           }); // 벡틱을 쓰면 안에 변수를 넣을 수 있다.
           originalTodo.value = {...res.data}; // 새로운 값으로 저장된 것을 original값으로 다시 저장한다.
+          triggerToast();
           console.log(res);
         }
 
