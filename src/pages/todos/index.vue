@@ -49,8 +49,10 @@
         </li>
       </ul>
     </nav>          
-   
   </div>   
+    <Toast v-if="showToast"
+          :message="toastMessage"
+          :type="toastAlertType" />
 </template>
 
 <script>
@@ -58,10 +60,12 @@ import { ref, computed, watch } from 'vue';
 import axios from "axios";
 import TodoSimpleForm from '@/components/TodoSimpleForm.vue';
 import TodoList from '@/components/TodoList.vue';
+import Toast from '@/components/Toast.vue';
 export default {  
   components: {
     TodoSimpleForm,
-    TodoList
+    TodoList,
+    Toast,
   },
   setup(){      
     const todos = ref([]); 
@@ -71,6 +75,22 @@ export default {
     const limit = 5;
     const currentPage = ref(1);
     let timeout = null;
+    
+    const showToast = ref(false);
+    const toastMessage = ref(''); 
+    const toastAlertType = ref('');
+
+    const triggerToast = (message, type = 'success') => { 
+      showToast.value = true;
+      toastMessage.value = message; 
+      toastAlertType.value = type;
+
+      setTimeout(() => { 
+          toastMessage.value = ''; 
+          showToast.value = false; 
+          toastAlertType.value = ''; 
+      }, 3000)
+    }
 
     watch(searchText, () => {
       clearTimeout(timeout);
@@ -97,7 +117,7 @@ export default {
          getTodos(1);
       }catch(err){
         console.log(err);
-        error.value = 'Someting went wrong';
+        triggerToast('something went wrong!', 'danger');
       } 
     }   
 
@@ -112,7 +132,7 @@ export default {
         todos.value = res.data;       
       }catch(err){
         console.log(err);
-        error.value = 'Someting went wrong';
+        triggerToast('something went wrong!', 'danger');
       }
     }
 
@@ -129,7 +149,7 @@ export default {
          getTodos(1);
       }catch(err){
         console.log(err);
-        error.value = 'Someting went wrong';
+        triggerToast('something went wrong!', 'danger');
       }     
     }
 
@@ -144,7 +164,7 @@ export default {
         todos.value[index].completed = checked;  
       }catch(err){
         console.log(err);
-        error.value = 'Someting went wrong';
+        triggerToast('something went wrong!', 'danger');
       } 
     }
     
@@ -161,6 +181,10 @@ export default {
       currentPage,
       numberOfPages,
       searchTodo, 
+      showToast,
+      toastMessage,
+      toastAlertType,
+      triggerToast,
     }
   }  
 }

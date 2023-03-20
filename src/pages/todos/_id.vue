@@ -44,8 +44,6 @@
   <Toast v-if="showToast"
           :message="toastMessage"
           :type="toastAlertType" /> 
-
-  <div id="kosa">Kosa</div>
 </template>
 
 <script>
