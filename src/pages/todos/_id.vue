@@ -51,7 +51,7 @@
 <script>
 import {useRoute, useRouter} from 'vue-router';
 import axios from 'axios';
-import {ref, computed, onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onUnmounted, onBeforeUnmount} from 'vue';
+import {ref, computed, onUnmounted} from 'vue';
 import _ from 'lodash';
 import Toast from '@/components/Toast.vue'; // @ => 절대경로
 
@@ -61,28 +61,9 @@ export default {
   },
 
     setup(){
-        onBeforeMount(() => {
-            console.log(document.querySelector('#kosa'));
-        });
-
-        onMounted(() => {
-          console.log(document.querySelector('#kosa'));
-        });
-
-        onBeforeUpdate(() => {
-          console.log("before update");
-        });
-
-        onUpdated(() => {
-          console.log("updated");
-        });
-
-        onBeforeUnmount(() => {
-          console.log("before unmount");
-        });
-
         onUnmounted(() => {
           console.log("unmounted");
+          clearTimeout(timeout.value); //hello가 출력되지 않는다.
         });
 
         console.log('hello');
@@ -97,13 +78,15 @@ export default {
        const showToast = ref(false);
        const toastMessage = ref(''); 
        const toastAlertType = ref('');
+       const timeout = ref(null); // 시간을 저장할 수 있는 변수
 
        const triggerToast = (message, type = 'success') => { //메세지라는 이름으로 데이터 값이 넘어오면
           showToast.value = true; // 화면에서 보여진다.
           toastMessage.value = message; // toastMessage.value에 message값을 넣어준다.
           toastAlertType.value = type;
 
-          setTimeout(() => {
+          timeout.value = setTimeout(() => { 
+              console.log('hello'); // 메모리적 누수가 발생할 수 있는 곳에서 onUnmounted를 사용한다.
               toastMessage.value = ''; // // 먼저 toastMEssaage에 해당하는 값을 기본값으로 초기화한다.
               showToast.value = false; // 화면에서 3초 후에 사라진다.
               toastAlertType.value = ''; // toastAlertType값을 초기화 해준다.
