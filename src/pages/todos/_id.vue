@@ -44,12 +44,14 @@
   <Toast v-if="showToast"
           :message="toastMessage"
           :type="toastAlertType" /> 
+
+  <div id="kosa">Kosa</div>
 </template>
 
 <script>
 import {useRoute, useRouter} from 'vue-router';
 import axios from 'axios';
-import {ref, computed} from '@vue/reactivity';
+import {ref, computed, onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onUnmounted, onBeforeUnmount} from 'vue';
 import _ from 'lodash';
 import Toast from '@/components/Toast.vue'; // @ => 절대경로
 
@@ -59,6 +61,32 @@ export default {
   },
 
     setup(){
+        onBeforeMount(() => {
+            console.log(document.querySelector('#kosa'));
+        });
+
+        onMounted(() => {
+          console.log(document.querySelector('#kosa'));
+        });
+
+        onBeforeUpdate(() => {
+          console.log("before update");
+        });
+
+        onUpdated(() => {
+          console.log("updated");
+        });
+
+        onBeforeUnmount(() => {
+          console.log("before unmount");
+        });
+
+        onUnmounted(() => {
+          console.log("unmounted");
+        });
+
+        console.log('hello');
+
         const route = useRoute();
         const router = useRouter(); // route가 뭔지 router가 뭔지 알아야 함.
         const todo = ref(null);
