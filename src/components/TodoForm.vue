@@ -12,7 +12,7 @@
               <input v-model="todo.subject" type="text" class="form-control"/>
           </div>
       </div>
-      <div class="col-6">
+      <div v-if="editing" class="col-6">
           <div class="form-group">
             <label>Status</label>
               <div>
@@ -26,13 +26,20 @@
               </div>
           </div>
       </div>
+      <div class="col-12">
+            <div class="form-group">
+                <label>Body</label>
+                <textarea v-model="todo.body" class="form-control"
+                    cols="30" rows="10">
+                </textarea>
+            </div> 
+      </div>
     </div>
-
     <button 
         type="submit" 
         class="btn btn-info"
         :disabled="!todoUpdated">
-        Save
+        {{editing ? 'Update' : 'Create'}}
     </button>
     <button 
         class="btn btn-secondary ml-2" 
@@ -65,7 +72,7 @@ export default {
         }
   },
 
-    setup(){
+    setup(props){
         // onUnmounted(() => {
         //   console.log("unmounted");
         //   clearTimeout(timeout.value); //hello가 출력되지 않는다.
@@ -75,8 +82,12 @@ export default {
 
         const route = useRoute();
         const router = useRouter(); // route가 뭔지 router가 뭔지 알아야 함.
-        const todo = ref(null);
-        const loading = ref(true); // 처음엔 true로 선언
+        const todo = ref({
+            subject: '', // subject null 되는 것 방지
+            completed: false, // 처음에 글 만들면 completed는 false여야한다.
+            body: '' // body값 추가
+        });
+        const loading = ref(false); 
         const todoId = route.params.id;
         const originalTodo = ref(null); // 오리지널 todo값을 가질 수 있는 변수를 선언
 
@@ -88,15 +99,25 @@ export default {
         } = useToast();
 
         const onSave = async() => {
-          //patch나 put은 수정.
-          // 여러개를 수정해야하므로 put 사용.
-          const res = await axios.put(`http://localhost:3000/todos/${todoId}`, {
-            subject: todo.value.subject,
-            completed: todo.value.completed
-          }); // 벡틱을 쓰면 안에 변수를 넣을 수 있다.
-          originalTodo.value = {...res.data}; // 새로운 값으로 저장된 것을 original값으로 다시 저장한다.
-          triggerToast('집에 보내줘!!!!!!!!!!!!!!!!!!!!!!!'); // 메세지값이 이거로 수정이 되도록 한다.
-          console.log(res);
+          try{
+            let res;
+            if(props.editing){
+                res = await axios.put(`http://localhost:3000/todos/${todoId}`, {
+                subject: todo.value.subject,
+                completed: todo.value.completed 
+            });
+            } else {
+                res = await axios.post('`http://localhost:3000/todos', {
+                    subject: todo.value.subject,
+                    completed: todo.value.completed 
+                });
+            }
+            originalTodo.value = {...res.data}; // 새로운 값으로 저장된 것을 original값으로 다시 저장한다.
+            triggerToast('집에 보내줘!!!!!!!!!!!!!!!!!!!!!!!'); // 메세지값이 이거로 수정이 되도록 한다.
+          } catch(err) {
+                console.log(err);
+                triggerToast('something went wrong!', 'danger');
+          }
         }
 
         const todoUpdated = computed(() => {
@@ -104,16 +125,18 @@ export default {
         });
 
         const getTodo = async() => { // 비동기식 처리
-          try {
-              const res = await axios.get(`http://localhost:3000/todos/${todoId}`);
-              todo.value = {...res.data};
-              originalTodo.value = {...res.data};//res.data => 같은값이 저장된다. 같은 주소값을 가짐. 따라서 {...res.dat}로 새로운 주소값을 받아 복사해서 가져온다.
-              console.log(todo.value);
-              loading.value = false; // 데이터 값을 받아오면 false 처리
-          } catch(err) {
-            console.log(err);
-            triggerToast('something went wrong!', 'danger');
-          }
+            loading.value= true;
+            try {
+                const res = await axios.get(`http://localhost:3000/todos/${todoId}`);
+                todo.value = {...res.data};
+                originalTodo.value = {...res.data};//res.data => 같은값이 저장된다. 같은 주소값을 가짐. 따라서 {...res.dat}로 새로운 주소값을 받아 복사해서 가져온다.
+                console.log(todo.value);
+                loading.value = false; // 데이터 값을 받아오면 false 처리
+            } catch(err) {
+                console.log(err);
+                loading.value = false;
+                triggerToast('something went wrong!', 'danger');
+            }
         };
       
         const moveToListPage = () => {
@@ -126,8 +149,10 @@ export default {
         const toggleTodoStatus = () => {
           todo.value.completed = !todo.value.completed
         }
-
-        getTodo();
+        
+        if(props.editing) {
+            getTodo(); // 수정모드로 갔을 때만 getTodo 함수 호출
+        }
 
         return {
           todo,
