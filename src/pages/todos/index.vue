@@ -1,13 +1,14 @@
 <template>    
   <div>
-    <h2>To-Do List</h2>
-    <input
-      class="form-control" 
-      type="text" 
-      v-model="searchText"
-      placeholder="Search"
-      @keyup.enter="searchTodo"
-    >
+    <div class="d-flex justify-content-between mb-3">
+      <h2>To-Do List</h2>
+      <button 
+      class="btn btn-primary"
+      @click="moveToCreatePage"
+      >
+        Create Todo
+      </button>
+    </div>
     <hr>
     <TodoSimpleForm @add-todo="addTodo"/>
     <div style="color: red">{{error}}</div>
@@ -62,6 +63,8 @@ import TodoSimpleForm from '@/components/TodoSimpleForm.vue';
 import TodoList from '@/components/TodoList.vue';
 import Toast from '@/components/Toast.vue';
 import {useToast} from '@/composables/toast'; // js 꼭 안붙여도 된다.
+import {useRouter} from 'vue-router';
+// router는 페이지를 이동하기 위해 씀.
 export default {  
   components: {
     TodoSimpleForm,
@@ -76,6 +79,7 @@ export default {
     const limit = 5;
     const currentPage = ref(1);
     let timeout = null;
+    const router = useRouter();
 
     const{
       toastMessage,
@@ -90,6 +94,13 @@ export default {
         getTodos(1);
       }, 2000);      
     });
+
+    const moveToCreatePage = () => {
+      router.push({
+        name: 'TodoCreate'
+        }
+      );
+    }
 
     const searchTodo = () => {
       clearTimeout(timeout);
@@ -159,7 +170,7 @@ export default {
         triggerToast('something went wrong!', 'danger');
       } 
     }
-    
+
     return{      
       todos,      
       deleteTodo,
@@ -177,6 +188,7 @@ export default {
       toastMessage,
       toastAlertType,
       triggerToast,
+      moveToCreatePage,
     }
   }  
 }
