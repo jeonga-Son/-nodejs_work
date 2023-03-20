@@ -61,6 +61,7 @@ import axios from "axios";
 import TodoSimpleForm from '@/components/TodoSimpleForm.vue';
 import TodoList from '@/components/TodoList.vue';
 import Toast from '@/components/Toast.vue';
+import {useToast} from '@/composables/toast'; // js 꼭 안붙여도 된다.
 export default {  
   components: {
     TodoSimpleForm,
@@ -75,22 +76,13 @@ export default {
     const limit = 5;
     const currentPage = ref(1);
     let timeout = null;
-    
-    const showToast = ref(false);
-    const toastMessage = ref(''); 
-    const toastAlertType = ref('');
 
-    const triggerToast = (message, type = 'success') => { 
-      showToast.value = true;
-      toastMessage.value = message; 
-      toastAlertType.value = type;
-
-      setTimeout(() => { 
-          toastMessage.value = ''; 
-          showToast.value = false; 
-          toastAlertType.value = ''; 
-      }, 3000)
-    }
+    const{
+      toastMessage,
+      toastAlertType,
+      showToast,
+      triggerToast
+    } = useToast();
 
     watch(searchText, () => {
       clearTimeout(timeout);

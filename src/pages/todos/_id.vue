@@ -52,6 +52,7 @@ import axios from 'axios';
 import {ref, computed, onUnmounted} from 'vue';
 import _ from 'lodash';
 import Toast from '@/components/Toast.vue'; // @ => 절대경로
+import {useToast} from '@/composables/toast';
 
 export default {
   components: { // 다른 위치에있는 파일을 불러와서 여기서 실행시키고 싶다면 이렇게 선언해줘야한다.
@@ -59,10 +60,10 @@ export default {
   },
 
     setup(){
-        onUnmounted(() => {
-          console.log("unmounted");
-          clearTimeout(timeout.value); //hello가 출력되지 않는다.
-        });
+        // onUnmounted(() => {
+        //   console.log("unmounted");
+        //   clearTimeout(timeout.value); //hello가 출력되지 않는다.
+        // });
 
         console.log('hello');
 
@@ -72,24 +73,13 @@ export default {
         const loading = ref(true); // 처음엔 true로 선언
         const todoId = route.params.id;
         const originalTodo = ref(null); // 오리지널 todo값을 가질 수 있는 변수를 선언
-       
-       const showToast = ref(false);
-       const toastMessage = ref(''); 
-       const toastAlertType = ref('');
-       const timeout = ref(null); // 시간을 저장할 수 있는 변수
 
-       const triggerToast = (message, type = 'success') => { //메세지라는 이름으로 데이터 값이 넘어오면
-          showToast.value = true; // 화면에서 보여진다.
-          toastMessage.value = message; // toastMessage.value에 message값을 넣어준다.
-          toastAlertType.value = type;
-
-          timeout.value = setTimeout(() => { 
-              console.log('hello'); // 메모리적 누수가 발생할 수 있는 곳에서 onUnmounted를 사용한다.
-              toastMessage.value = ''; // // 먼저 toastMEssaage에 해당하는 값을 기본값으로 초기화한다.
-              showToast.value = false; // 화면에서 3초 후에 사라진다.
-              toastAlertType.value = ''; // toastAlertType값을 초기화 해준다.
-          }, 3000)
-       }
+        const{
+          toastMessage,
+          toastAlertType,
+          showToast,
+          triggerToast
+        } = useToast();
 
         const onSave = async() => {
           //patch나 put은 수정.
