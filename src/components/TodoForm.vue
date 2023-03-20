@@ -58,6 +58,13 @@ export default {
     Toast
   },
 
+    props: {
+        editing: {
+            type: Boolean,
+            default: false //default값이 false로 잡혀있다.
+        }
+  },
+
     setup(){
         // onUnmounted(() => {
         //   console.log("unmounted");
