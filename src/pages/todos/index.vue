@@ -10,8 +10,6 @@
       </button>
     </div>
     <hr>
-    <TodoSimpleForm @add-todo="addTodo"/>
-    <div style="color: red">{{error}}</div>
     
     <div v-if="!todos.length">
       추가된 Todo가 없습니다.
@@ -59,7 +57,6 @@
 <script>
 import { ref, computed, watch } from 'vue';
 import axios from "axios";
-import TodoSimpleForm from '@/components/TodoSimpleForm.vue';
 import TodoList from '@/components/TodoList.vue';
 import Toast from '@/components/Toast.vue';
 import {useToast} from '@/composables/toast'; // js 꼭 안붙여도 된다.
@@ -67,7 +64,6 @@ import {useRouter} from 'vue-router';
 // router는 페이지를 이동하기 위해 씀.
 export default {  
   components: {
-    TodoSimpleForm,
     TodoList,
     Toast,
   },

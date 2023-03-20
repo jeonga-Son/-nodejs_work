@@ -36,24 +36,14 @@
       "id": 20
     },
     {
-      "subject": "나는 왜 맨날 피곤?v",
+      "subject": "나는 왜 맨날 피곤?",
       "completed": false,
       "id": 21
     },
     {
-      "subject": "ㅁㅇㄴㄻㄴㅇㄹ",
-      "completed": false,
-      "id": 22
-    },
-    {
-      "subject": "집에..보내..주라...ㅌㅌㅎㅇ",
+      "subject": "집에..보내..주라..",
       "completed": false,
       "id": 23
-    },
-    {
-      "subject": "ㄴㅇㄴㄴㅇㄹㅇㄴㄹ",
-      "completed": true,
-      "id": 24
     }
   ]
 }
