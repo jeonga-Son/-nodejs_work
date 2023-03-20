@@ -101,19 +101,24 @@ export default {
         const onSave = async() => {
           try{
             let res;
-            if(props.editing){
-                res = await axios.put(`http://localhost:3000/todos/${todoId}`, {
+            const data = {
                 subject: todo.value.subject,
-                completed: todo.value.completed 
-            });
+                completed: todo.value.completed,
+                body: todo.value.body
+            };
+
+            if(props.editing){
+                res = await axios.put(`http://localhost:3000/todos/${todoId}`, data);
             } else {
-                res = await axios.post('`http://localhost:3000/todos', {
-                    subject: todo.value.subject,
-                    completed: todo.value.completed 
-                });
+                res = await axios.post('http://localhost:3000/todos', data);
+                todo.value.subject = '';
+                todo.value.body = '';
             }
+
             originalTodo.value = {...res.data}; // 새로운 값으로 저장된 것을 original값으로 다시 저장한다.
-            triggerToast('집에 보내줘!!!!!!!!!!!!!!!!!!!!!!!'); // 메세지값이 이거로 수정이 되도록 한다.
+            const message = 'Successfuly ' + (props.editing ? 'Update!!!' : 'Create!!!');
+            triggerToast(message); 
+
           } catch(err) {
                 console.log(err);
                 triggerToast('something went wrong!', 'danger');
